@@ -192,6 +192,78 @@ class TV_Settings {
 			'tv_slider_settings'
 		);
 		
+		// Show Heading
+		add_settings_field(
+			'show_slider_heading',
+			__( 'Show Slider Heading', 'tv-world-channels' ),
+			array( $this, 'render_show_slider_heading_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Heading Header Element
+		add_settings_field(
+			'slider_heading_element',
+			__( 'Heading Header Element', 'tv-world-channels' ),
+			array( $this, 'render_slider_heading_element_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Heading Font Size
+		add_settings_field(
+			'slider_heading_font_size',
+			__( 'Heading Font Size (pixels)', 'tv-world-channels' ),
+			array( $this, 'render_slider_heading_font_size_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Heading Font Color
+		add_settings_field(
+			'slider_heading_font_color',
+			__( 'Heading Font Color', 'tv-world-channels' ),
+			array( $this, 'render_slider_heading_font_color_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Heading Font Family
+		add_settings_field(
+			'slider_heading_font_family',
+			__( 'Heading Font Family', 'tv-world-channels' ),
+			array( $this, 'render_slider_heading_font_family_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Heading Font Weight
+		add_settings_field(
+			'slider_heading_font_weight',
+			__( 'Heading Font Weight', 'tv-world-channels' ),
+			array( $this, 'render_slider_heading_font_weight_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Channel Name Header Element
+		add_settings_field(
+			'slider_name_element',
+			__( 'Channel Name Header Element', 'tv-world-channels' ),
+			array( $this, 'render_slider_name_element_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
+		// Channel Name Font Size
+		add_settings_field(
+			'slider_name_font_size',
+			__( 'Channel Name Font Size (pixels)', 'tv-world-channels' ),
+			array( $this, 'render_slider_name_font_size_field' ),
+			'tv_world_channels_settings',
+			'tv_slider_settings'
+		);
+		
 		// Table Settings Section
 		add_settings_section(
 			'tv_table_settings',
@@ -427,6 +499,14 @@ class TV_Settings {
 		$sanitized['logo_gap'] = isset( $input['logo_gap'] ) ? absint( $input['logo_gap'] ) : 20;
 		$sanitized['hide_scrollbar'] = isset( $input['hide_scrollbar'] ) ? 1 : 0;
 		$sanitized['show_slider_controls'] = isset( $input['show_slider_controls'] ) ? 1 : 0;
+		$sanitized['show_slider_heading'] = isset( $input['show_slider_heading'] ) ? 1 : 0;
+		$sanitized['slider_heading_element'] = isset( $input['slider_heading_element'] ) ? sanitize_text_field( $input['slider_heading_element'] ) : 'h3';
+		$sanitized['slider_heading_font_size'] = isset( $input['slider_heading_font_size'] ) ? absint( $input['slider_heading_font_size'] ) : 24;
+		$sanitized['slider_heading_font_color'] = isset( $input['slider_heading_font_color'] ) ? sanitize_text_field( $input['slider_heading_font_color'] ) : '#1a1a1a';
+		$sanitized['slider_heading_font_family'] = isset( $input['slider_heading_font_family'] ) ? sanitize_text_field( $input['slider_heading_font_family'] ) : '';
+		$sanitized['slider_heading_font_weight'] = isset( $input['slider_heading_font_weight'] ) ? sanitize_text_field( $input['slider_heading_font_weight'] ) : '700';
+		$sanitized['slider_name_element'] = isset( $input['slider_name_element'] ) ? sanitize_text_field( $input['slider_name_element'] ) : 'h3';
+		$sanitized['slider_name_font_size'] = isset( $input['slider_name_font_size'] ) ? absint( $input['slider_name_font_size'] ) : 14;
 		
 		// Table settings
 		$sanitized['show_logos_in_table'] = isset( $input['show_logos_in_table'] ) ? 1 : 0;
@@ -476,6 +556,14 @@ class TV_Settings {
 			'logo_gap' => 20,
 			'hide_scrollbar' => 0,
 			'show_slider_controls' => 1,
+			'show_slider_heading' => 1,
+			'slider_heading_element' => 'h3',
+			'slider_heading_font_size' => 24,
+			'slider_heading_font_color' => '#1a1a1a',
+			'slider_heading_font_family' => '',
+			'slider_heading_font_weight' => '700',
+			'slider_name_element' => 'h3',
+			'slider_name_font_size' => 14,
 			'show_logos_in_table' => 0,
 			'rows_per_page' => 25,
 			'enable_country_flags' => 1,
@@ -533,6 +621,7 @@ class TV_Settings {
 		
 		// Handle tab switching
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'settings';
+		$active_subtab = isset( $_GET['subtab'] ) ? sanitize_text_field( wp_unslash( $_GET['subtab'] ) ) : 'slider';
 		
 		// Show success message if cache was cleared
 		if ( isset( $_GET['cache_cleared'] ) && '1' === $_GET['cache_cleared'] ) {
@@ -554,18 +643,219 @@ class TV_Settings {
 			
 			<div class="tv-settings-content">
 				<?php if ( 'settings' === $active_tab ) : ?>
-					<form method="post" action="options.php">
-						<?php
-						settings_fields( $this->option_name );
-						do_settings_sections( 'tv_world_channels_settings' );
-						submit_button();
-						?>
-					</form>
-					
-					<?php $this->render_maintenance_actions(); ?>
+					<div class="tv-settings-layout">
+						<!-- Navigation Sidebar -->
+						<div class="tv-settings-nav">
+							<ul class="tv-settings-nav-menu">
+								<li>
+									<a href="#slider-general" class="tv-nav-link <?php echo 'slider' === $active_subtab ? 'active' : ''; ?>" data-section="slider-general">
+										<span class="dashicons dashicons-slides"></span>
+										<?php esc_html_e( 'Slider General', 'tv-world-channels' ); ?>
+									</a>
+								</li>
+								<li>
+									<a href="#slider-appearance" class="tv-nav-link" data-section="slider-appearance">
+										<span class="dashicons dashicons-admin-appearance"></span>
+										<?php esc_html_e( 'Slider Appearance', 'tv-world-channels' ); ?>
+									</a>
+								</li>
+								<li>
+									<a href="#slider-typography" class="tv-nav-link" data-section="slider-typography">
+										<span class="dashicons dashicons-editor-textcolor"></span>
+										<?php esc_html_e( 'Slider Typography', 'tv-world-channels' ); ?>
+									</a>
+								</li>
+								<li>
+									<a href="#table-general" class="tv-nav-link" data-section="table-general">
+										<span class="dashicons dashicons-list-view"></span>
+										<?php esc_html_e( 'Table General', 'tv-world-channels' ); ?>
+									</a>
+								</li>
+								<li>
+									<a href="#table-styling" class="tv-nav-link" data-section="table-styling">
+										<span class="dashicons dashicons-admin-customizer"></span>
+										<?php esc_html_e( 'Table Styling', 'tv-world-channels' ); ?>
+									</a>
+								</li>
+								<li>
+									<a href="#maintenance" class="tv-nav-link" data-section="maintenance">
+										<span class="dashicons dashicons-admin-tools"></span>
+										<?php esc_html_e( 'Maintenance', 'tv-world-channels' ); ?>
+									</a>
+								</li>
+							</ul>
+						</div>
+						
+						<!-- Settings Form -->
+						<div class="tv-settings-main">
+							<form method="post" action="options.php" id="tv-settings-form">
+								<?php
+								settings_fields( $this->option_name );
+								
+								// Slider General Section
+								$this->render_settings_section( 'slider-general', __( 'Slider General Settings', 'tv-world-channels' ), array(
+									'slider_speed',
+									'logo_width',
+									'enable_autoplay',
+									'pause_on_hover',
+									'loop_slider',
+									'show_slider_controls',
+									'hide_scrollbar',
+								) );
+								
+								// Slider Appearance Section
+								$this->render_settings_section( 'slider-appearance', __( 'Slider Appearance', 'tv-world-channels' ), array(
+									'logo_background',
+									'logo_padding',
+									'logo_margin',
+									'logo_gap',
+								) );
+								
+								// Slider Typography Section
+								$this->render_settings_section( 'slider-typography', __( 'Slider Typography', 'tv-world-channels' ), array(
+									'show_slider_heading',
+									'slider_heading_element',
+									'slider_heading_font_size',
+									'slider_heading_font_color',
+									'slider_heading_font_family',
+									'slider_heading_font_weight',
+									'slider_name_element',
+									'slider_name_font_size',
+								) );
+								
+								// Table General Section
+								$this->render_settings_section( 'table-general', __( 'Table General Settings', 'tv-world-channels' ), array(
+									'show_logos_in_table',
+									'rows_per_page',
+									'enable_country_flags',
+								) );
+								
+								// Table Styling Section
+								$this->render_settings_section( 'table-styling', __( 'Table Styling', 'tv-world-channels' ), array(
+									'table_bg_color',
+									'table_row_bg_color',
+									'table_row_hover_bg_color',
+									'table_header_bg_color',
+									'sidebar_bg_color',
+									'sidebar_active_bg_color',
+									'button_bg_color',
+									'button_text_color',
+									'button_hover_bg_color',
+									'button_hover_text_color',
+									'button_border_radius',
+									'table_box_shadow',
+									'table_border_color',
+									'category_bg_color',
+									'pagination_text_color',
+									'pagination_font_family',
+									'pagination_font_size',
+								) );
+								
+								// Maintenance Section
+								$this->render_settings_section( 'maintenance', __( 'Plugin Maintenance', 'tv-world-channels' ), array(
+									'cleanup_on_deactivation',
+								), false );
+								
+								submit_button( __( 'Save Settings', 'tv-world-channels' ), 'primary', 'submit', true, array( 'id' => 'tv-save-settings' ) );
+								?>
+							</form>
+							
+							<?php $this->render_maintenance_actions(); ?>
+						</div>
+					</div>
 				<?php else : ?>
 					<?php $this->render_help_tab(); ?>
 				<?php endif; ?>
+			</div>
+		</div>
+		<?php
+	}
+	
+	/**
+	 * Get field label by field ID
+	 *
+	 * @param string $field_id Field ID
+	 * @return string Field label
+	 */
+	private function get_field_label( $field_id ) {
+		$labels = array(
+			'slider_speed' => __( 'Slider Speed (milliseconds)', 'tv-world-channels' ),
+			'logo_width' => __( 'Logo Width (pixels)', 'tv-world-channels' ),
+			'enable_autoplay' => __( 'Enable Autoplay', 'tv-world-channels' ),
+			'pause_on_hover' => __( 'Pause on Hover', 'tv-world-channels' ),
+			'loop_slider' => __( 'Loop Slider', 'tv-world-channels' ),
+			'logo_background' => __( 'Logo Background Color', 'tv-world-channels' ),
+			'logo_padding' => __( 'Logo Padding (pixels)', 'tv-world-channels' ),
+			'logo_margin' => __( 'Logo Margin (pixels)', 'tv-world-channels' ),
+			'logo_gap' => __( 'Gap Between Logos (pixels)', 'tv-world-channels' ),
+			'hide_scrollbar' => __( 'Hide Scrollbar', 'tv-world-channels' ),
+			'show_slider_controls' => __( 'Show Slider Controls', 'tv-world-channels' ),
+			'show_slider_heading' => __( 'Show Slider Heading', 'tv-world-channels' ),
+			'slider_heading_element' => __( 'Heading Header Element', 'tv-world-channels' ),
+			'slider_heading_font_size' => __( 'Heading Font Size (pixels)', 'tv-world-channels' ),
+			'slider_heading_font_color' => __( 'Heading Font Color', 'tv-world-channels' ),
+			'slider_heading_font_family' => __( 'Heading Font Family', 'tv-world-channels' ),
+			'slider_heading_font_weight' => __( 'Heading Font Weight', 'tv-world-channels' ),
+			'slider_name_element' => __( 'Channel Name Header Element', 'tv-world-channels' ),
+			'slider_name_font_size' => __( 'Channel Name Font Size (pixels)', 'tv-world-channels' ),
+			'show_logos_in_table' => __( 'Show Logos in Table', 'tv-world-channels' ),
+			'rows_per_page' => __( 'Rows Per Page', 'tv-world-channels' ),
+			'enable_country_flags' => __( 'Enable Country Flags', 'tv-world-channels' ),
+			'table_bg_color' => __( 'Table Background Color', 'tv-world-channels' ),
+			'table_row_bg_color' => __( 'Table Row Background Color', 'tv-world-channels' ),
+			'table_row_hover_bg_color' => __( 'Table Row Hover Background Color', 'tv-world-channels' ),
+			'table_header_bg_color' => __( 'Table Header Background Color', 'tv-world-channels' ),
+			'sidebar_bg_color' => __( 'Sidebar Background Color', 'tv-world-channels' ),
+			'sidebar_active_bg_color' => __( 'Sidebar Active Item Background Color', 'tv-world-channels' ),
+			'button_bg_color' => __( 'Button Background Color', 'tv-world-channels' ),
+			'button_text_color' => __( 'Button Text Color', 'tv-world-channels' ),
+			'button_hover_bg_color' => __( 'Button Hover Background Color', 'tv-world-channels' ),
+			'button_hover_text_color' => __( 'Button Hover Text Color', 'tv-world-channels' ),
+			'button_border_radius' => __( 'Button Border Radius', 'tv-world-channels' ),
+			'table_box_shadow' => __( 'Table Box Shadow', 'tv-world-channels' ),
+			'table_border_color' => __( 'Table Border Color', 'tv-world-channels' ),
+			'category_bg_color' => __( 'Category Background Color', 'tv-world-channels' ),
+			'pagination_text_color' => __( 'Pagination Text Color', 'tv-world-channels' ),
+			'pagination_font_family' => __( 'Pagination Font Family', 'tv-world-channels' ),
+			'pagination_font_size' => __( 'Pagination Font Size (pixels)', 'tv-world-channels' ),
+			'cleanup_on_deactivation' => __( 'Cleanup On Deactivation', 'tv-world-channels' ),
+		);
+		
+		return isset( $labels[ $field_id ] ) ? $labels[ $field_id ] : ucwords( str_replace( '_', ' ', $field_id ) );
+	}
+	
+	/**
+	 * Render a settings section with fields
+	 *
+	 * @param string $section_id Section ID
+	 * @param string $section_title Section title
+	 * @param array $field_ids Array of field IDs to render
+	 * @param bool $show_submit Show submit button (default: true)
+	 */
+	private function render_settings_section( $section_id, $section_title, $field_ids, $show_submit = true ) {
+		?>
+		<div class="tv-settings-section" id="<?php echo esc_attr( $section_id ); ?>">
+			<h2 class="tv-section-title"><?php echo esc_html( $section_title ); ?></h2>
+			<div class="tv-section-content">
+				<table class="form-table">
+					<?php
+					foreach ( $field_ids as $field_id ) {
+						$field_method = 'render_' . $field_id . '_field';
+						if ( method_exists( $this, $field_method ) ) {
+							?>
+							<tr>
+								<th scope="row">
+									<?php echo esc_html( $this->get_field_label( $field_id ) ); ?>
+								</th>
+								<td>
+									<?php call_user_func( array( $this, $field_method ) ); ?>
+								</td>
+							</tr>
+							<?php
+						}
+					}
+					?>
+				</table>
 			</div>
 		</div>
 		<?php
@@ -1091,6 +1381,121 @@ class TV_Settings {
 	// ============================================
 	// Field Renderers - Maintenance Settings
 	// ============================================
+	
+	/**
+	 * Render show slider heading field
+	 */
+	public function render_show_slider_heading_field() {
+		$value = $this->get_setting( 'show_slider_heading', 1 );
+		?>
+		<label>
+			<input type="checkbox" name="<?php echo esc_attr( $this->option_name ); ?>[show_slider_heading]" value="1" <?php checked( $value, 1 ); ?> />
+			<?php esc_html_e( 'Show heading above slider (e.g., "TV Channels in France")', 'tv-world-channels' ); ?>
+		</label>
+		<?php
+	}
+	
+	/**
+	 * Render slider heading element field
+	 */
+	public function render_slider_heading_element_field() {
+		$value = $this->get_setting( 'slider_heading_element', 'h3' );
+		$options = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		?>
+		<select name="<?php echo esc_attr( $this->option_name ); ?>[slider_heading_element]">
+			<?php foreach ( $options as $option ) : ?>
+				<option value="<?php echo esc_attr( $option ); ?>" <?php selected( $value, $option ); ?>><?php echo esc_html( strtoupper( $option ) ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php esc_html_e( 'HTML header element for slider heading. Default: H3.', 'tv-world-channels' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * Render slider heading font size field
+	 */
+	public function render_slider_heading_font_size_field() {
+		$value = $this->get_setting( 'slider_heading_font_size', 24 );
+		?>
+		<input type="number" name="<?php echo esc_attr( $this->option_name ); ?>[slider_heading_font_size]" value="<?php echo esc_attr( $value ); ?>" min="10" max="72" step="1" class="small-text" /> px
+		<p class="description"><?php esc_html_e( 'Font size for slider heading. Default: 24px.', 'tv-world-channels' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * Render slider heading font color field
+	 */
+	public function render_slider_heading_font_color_field() {
+		$value = $this->get_setting( 'slider_heading_font_color', '#1a1a1a' );
+		?>
+		<input type="text" name="<?php echo esc_attr( $this->option_name ); ?>[slider_heading_font_color]" value="<?php echo esc_attr( $value ); ?>" class="tv-color-picker" data-default-color="#1a1a1a" />
+		<p class="description"><?php esc_html_e( 'Font color for slider heading. Default: #1a1a1a (dark gray).', 'tv-world-channels' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * Render slider heading font family field
+	 */
+	public function render_slider_heading_font_family_field() {
+		$value = $this->get_setting( 'slider_heading_font_family', '' );
+		?>
+		<input type="text" name="<?php echo esc_attr( $this->option_name ); ?>[slider_heading_font_family]" value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="Arial, sans-serif" />
+		<p class="description"><?php esc_html_e( 'Font family for slider heading. Leave empty to use theme default. Use CSS font-family syntax (e.g., "Arial, sans-serif" or "Georgia, serif").', 'tv-world-channels' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * Render slider heading font weight field
+	 */
+	public function render_slider_heading_font_weight_field() {
+		$value = $this->get_setting( 'slider_heading_font_weight', '700' );
+		$options = array(
+			'100' => 'Thin (100)',
+			'200' => 'Extra Light (200)',
+			'300' => 'Light (300)',
+			'400' => 'Normal (400)',
+			'500' => 'Medium (500)',
+			'600' => 'Semi Bold (600)',
+			'700' => 'Bold (700)',
+			'800' => 'Extra Bold (800)',
+			'900' => 'Black (900)',
+		);
+		?>
+		<select name="<?php echo esc_attr( $this->option_name ); ?>[slider_heading_font_weight]">
+			<?php foreach ( $options as $option_value => $option_label ) : ?>
+				<option value="<?php echo esc_attr( $option_value ); ?>" <?php selected( $value, $option_value ); ?>><?php echo esc_html( $option_label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php esc_html_e( 'Font weight for slider heading. Default: Bold (700).', 'tv-world-channels' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * Render slider name element field
+	 */
+	public function render_slider_name_element_field() {
+		$value = $this->get_setting( 'slider_name_element', 'h3' );
+		$options = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		?>
+		<select name="<?php echo esc_attr( $this->option_name ); ?>[slider_name_element]">
+			<?php foreach ( $options as $option ) : ?>
+				<option value="<?php echo esc_attr( $option ); ?>" <?php selected( $value, $option ); ?>><?php echo esc_html( strtoupper( $option ) ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php esc_html_e( 'HTML header element for channel names under logos. Default: H3.', 'tv-world-channels' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * Render slider name font size field
+	 */
+	public function render_slider_name_font_size_field() {
+		$value = $this->get_setting( 'slider_name_font_size', 14 );
+		?>
+		<input type="number" name="<?php echo esc_attr( $this->option_name ); ?>[slider_name_font_size]" value="<?php echo esc_attr( $value ); ?>" min="8" max="48" step="1" class="small-text" /> px
+		<p class="description"><?php esc_html_e( 'Font size for channel names under logos. Default: 14px.', 'tv-world-channels' ); ?></p>
+		<?php
+	}
 	
 	/**
 	 * Render cleanup on deactivation field

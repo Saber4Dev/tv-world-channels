@@ -204,6 +204,27 @@ class TV_Slider {
 		$custom_css .= '.tv-slider { scrollbar-width: none !important; -ms-overflow-style: none !important; overflow: hidden !important; }';
 		$custom_css .= '.tv-slider::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }';
 		
+		// Heading styles
+		$show_heading = isset( $settings['show_slider_heading'] ) && 1 === $settings['show_slider_heading'];
+		if ( ! $show_heading ) {
+			$custom_css .= '.tv-slider-heading { display: none !important; }';
+		} else {
+			$heading_font_size = isset( $settings['slider_heading_font_size'] ) ? absint( $settings['slider_heading_font_size'] ) : 24;
+			$heading_font_color = isset( $settings['slider_heading_font_color'] ) ? sanitize_text_field( $settings['slider_heading_font_color'] ) : '#1a1a1a';
+			$heading_font_family = isset( $settings['slider_heading_font_family'] ) ? sanitize_text_field( $settings['slider_heading_font_family'] ) : '';
+			$heading_font_weight = isset( $settings['slider_heading_font_weight'] ) ? sanitize_text_field( $settings['slider_heading_font_weight'] ) : '700';
+			
+			$custom_css .= '.tv-slider-heading { font-size: ' . absint( $heading_font_size ) . 'px !important; color: ' . esc_attr( $heading_font_color ) . ' !important; font-weight: ' . esc_attr( $heading_font_weight ) . ' !important; }';
+			
+			if ( ! empty( $heading_font_family ) ) {
+				$custom_css .= '.tv-slider-heading { font-family: ' . esc_attr( $heading_font_family ) . ' !important; }';
+			}
+		}
+		
+		// Channel name font size
+		$name_font_size = isset( $settings['slider_name_font_size'] ) ? absint( $settings['slider_name_font_size'] ) : 14;
+		$custom_css .= '.tv-slider-name { font-size: ' . absint( $name_font_size ) . 'px !important; }';
+		
 		if ( ! empty( $custom_css ) ) {
 			wp_add_inline_style( 'tv-slider-css', $custom_css );
 		}
@@ -460,6 +481,20 @@ class TV_Slider {
 		$slider_speed = isset( $settings['slider_speed'] ) ? absint( $settings['slider_speed'] ) : 3000;
 		$item_count = count( $channels );
 		
+		// Get heading and name settings
+		$show_heading = isset( $settings['show_slider_heading'] ) && 1 === $settings['show_slider_heading'];
+		$heading_element = isset( $settings['slider_heading_element'] ) ? sanitize_text_field( $settings['slider_heading_element'] ) : 'h3';
+		$name_element = isset( $settings['slider_name_element'] ) ? sanitize_text_field( $settings['slider_name_element'] ) : 'h3';
+		
+		// Validate header elements (h1-h6 only)
+		$valid_elements = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		if ( ! in_array( $heading_element, $valid_elements, true ) ) {
+			$heading_element = 'h3';
+		}
+		if ( ! in_array( $name_element, $valid_elements, true ) ) {
+			$name_element = 'h3';
+		}
+		
 		// Calculate animation duration based on speed setting
 		// speed is milliseconds per item, so for all items: speed * item_count
 		// Convert to seconds for CSS animation
@@ -467,8 +502,8 @@ class TV_Slider {
 		
 		$output = '<div class="tv-slider-container">';
 		
-		// Add SEO heading for country/category
-		if ( ! empty( $country_name ) || ! empty( $category ) ) {
+		// Add SEO heading for country/category (only if enabled)
+		if ( $show_heading && ( ! empty( $country_name ) || ! empty( $category ) ) ) {
 			$heading_text = '';
 			if ( ! empty( $category ) && ! empty( $country_name ) ) {
 				$heading_text = ucfirst( $category ) . ' TV Channels in ' . esc_html( $country_name );
@@ -479,7 +514,7 @@ class TV_Slider {
 			}
 			
 			if ( ! empty( $heading_text ) ) {
-				$output .= '<h3 class="tv-slider-heading">' . esc_html( $heading_text ) . '</h3>';
+				$output .= '<' . esc_attr( $heading_element ) . ' class="tv-slider-heading">' . esc_html( $heading_text ) . '</' . esc_attr( $heading_element ) . '>';
 			}
 		}
 		
@@ -510,9 +545,9 @@ class TV_Slider {
 				}
 			}
 			
-			// Name with h3 for SEO
+			// Name with dynamic header element for SEO
 			if ( $show_names && ! empty( $channel_name ) ) {
-				$items_html .= '<h3 class="tv-slider-name">' . esc_html( $channel_name ) . '</h3>';
+				$items_html .= '<' . esc_attr( $name_element ) . ' class="tv-slider-name">' . esc_html( $channel_name ) . '</' . esc_attr( $name_element ) . '>';
 			}
 			
 			$items_html .= '</div>';
