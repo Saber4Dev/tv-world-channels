@@ -1,0 +1,241 @@
+/**
+ * Admin Settings Page Styles
+ *
+ * Styles for the TV World Channels settings page
+ */
+
+.tv-settings-wrap {
+	max-width: 1200px;
+	margin: 20px 20px 0 0;
+}
+
+.tv-settings-wrap h1 {
+	margin-bottom: 20px;
+}
+
+.tv-settings-content {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	padding: 20px;
+	margin-top: 20px;
+}
+
+/* Tab Navigation */
+.nav-tab-wrapper {
+	border-bottom: 1px solid #ccd0d4;
+	margin: 0 0 20px 0;
+	padding: 0;
+}
+
+.nav-tab {
+	display: inline-block;
+	padding: 10px 15px;
+	margin: 0 5px 0 0;
+	border: 1px solid #ccd0d4;
+	border-bottom: none;
+	background: #f1f1f1;
+	color: #555;
+	text-decoration: none;
+	border-radius: 4px 4px 0 0;
+}
+
+.nav-tab:hover {
+	background: #fafafa;
+	color: #23282d;
+}
+
+.nav-tab-active {
+	background: #fff;
+	color: #23282d;
+	border-bottom: 1px solid #fff;
+	margin-bottom: -1px;
+}
+
+/* Settings Form */
+.tv-settings-content form {
+	margin-top: 20px;
+}
+
+.tv-settings-content .form-table {
+	margin-top: 0;
+}
+
+.tv-settings-content .form-table th {
+	padding: 20px 10px 20px 0;
+	width: 200px;
+	font-weight: 600;
+}
+
+.tv-settings-content .form-table td {
+	padding: 15px 10px;
+}
+
+.tv-settings-content .form-table input[type="text"],
+.tv-settings-content .form-table input[type="number"] {
+	width: 100%;
+	max-width: 300px;
+}
+
+.tv-settings-content .form-table .description {
+	margin-top: 8px;
+	color: #646970;
+	font-style: italic;
+}
+
+.tv-settings-content .form-table label {
+	font-weight: normal;
+}
+
+/* Maintenance Actions */
+.tv-maintenance-actions {
+	margin-top: 40px;
+	padding-top: 30px;
+	border-top: 2px solid #ccd0d4;
+}
+
+.tv-maintenance-actions h2 {
+	margin-bottom: 15px;
+}
+
+.tv-maintenance-actions .button {
+	margin-right: 10px;
+}
+
+.tv-button-danger {
+	background: #dc3232 !important;
+	border-color: #dc3232 !important;
+	color: #fff !important;
+	text-shadow: none !important;
+}
+
+.tv-button-danger:hover {
+	background: #a00 !important;
+	border-color: #a00 !important;
+	color: #fff !important;
+}
+
+.tv-maintenance-actions .description {
+	display: block;
+	margin-top: 8px;
+	color: #646970;
+}
+
+/* Help Tab Content */
+.tv-help-content {
+	max-width: 900px;
+}
+
+.tv-help-content h2 {
+	margin-top: 0;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #ccd0d4;
+}
+
+.tv-help-section {
+	margin: 30px 0;
+	padding: 20px;
+	background: #f9f9f9;
+	border-left: 4px solid #2271b1;
+}
+
+.tv-help-section h3 {
+	margin-top: 0;
+	color: #2271b1;
+}
+
+.tv-help-section h4 {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	color: #1d2327;
+}
+
+.tv-help-section code {
+	background: #fff;
+	padding: 2px 6px;
+	border: 1px solid #ccd0d4;
+	border-radius: 3px;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 13px;
+}
+
+.tv-help-section pre {
+	background: #1e1e1e;
+	color: #d4d4d4;
+	padding: 15px;
+	border-radius: 4px;
+	overflow-x: auto;
+	margin: 15px 0;
+}
+
+.tv-help-section pre code {
+	background: transparent;
+	border: none;
+	padding: 0;
+	color: inherit;
+	font-size: 12px;
+	line-height: 1.6;
+}
+
+.tv-help-section ul {
+	margin: 10px 0 10px 20px;
+}
+
+.tv-help-section ul li {
+	margin: 8px 0;
+	line-height: 1.6;
+}
+
+.tv-help-section p {
+	line-height: 1.6;
+	margin: 10px 0;
+}
+
+.tv-help-section a {
+	color: #2271b1;
+	text-decoration: none;
+}
+
+.tv-help-section a:hover {
+	text-decoration: underline;
+}
+
+/* Success/Error Messages */
+.notice {
+	margin: 15px 0;
+}
+
+.notice.notice-success {
+	border-left-color: #00a32a;
+}
+
+.notice.notice-error {
+	border-left-color: #d63638;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+	.tv-settings-content .form-table th,
+	.tv-settings-content .form-table td {
+		display: block;
+		width: 100%;
+		padding: 10px 0;
+	}
+	
+	.tv-settings-content .form-table th {
+		padding-bottom: 5px;
+	}
+	
+	.nav-tab {
+		display: block;
+		margin: 0 0 5px 0;
+		border-radius: 4px;
+		border-bottom: 1px solid #ccd0d4;
+	}
+	
+	.nav-tab-active {
+		border-bottom: 1px solid #ccd0d4;
+		margin-bottom: 5px;
+	}
+}
+
